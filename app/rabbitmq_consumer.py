@@ -7,7 +7,6 @@ import time
 # ADDING CONTROLLED STARTUP CONDITION
 # READ https://docs.docker.com/compose/startup-order/
 
-time.sleep(15)
 url = os.environ.get('rabbitmq')
 params = pika.URLParameters(url)
 connection = pika.BlockingConnection(params)
