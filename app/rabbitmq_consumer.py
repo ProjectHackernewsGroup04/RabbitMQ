@@ -9,10 +9,11 @@ import time
 
 time.sleep(15)
 url = os.environ.get('rabbitmq')
-#params = pika.URLParameters(url)
-local = pika.ConnectionParameters('rabbitmq')
-connection = pika.BlockingConnection(local)
+params = pika.URLParameters(url)
+connection = pika.BlockingConnection(params)
 channel = connection.channel()
+
+backend_url = os.environ.get('BACKEND_URL')
 
 
 # Callback function - Executes for each message we consumes
@@ -21,7 +22,7 @@ def callback(ch, method, properties, body):
   my_json = json.loads(body.decode('utf8'))
   print(my_json,flush=True)
   try:
-  	requests.post("http://backend-app:5000/webhook", json=my_json)
+  	requests.post(backend_url, json=my_json)
   except Exception as e:
   	print(e,flush=True)
 
