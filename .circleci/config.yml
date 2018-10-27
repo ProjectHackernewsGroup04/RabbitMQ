@@ -69,7 +69,7 @@ jobs:
             ssh $SSH_USER@$SSH_HOST "docker pull hnclonecphb/rabbitmq-consumer:$CIRCLE_BRANCH
             docker stop rabbitmq-consumer
             docker rm rabbitmq-consumer
-            docker run --name rabbitmq-consumer --network=hnclone-network -e 'rabbitmq=$RABBITMQ_URL'  -d hnclonecphb/rabbitmq-consumer:$CIRCLE_BRANCH"
+            docker run --name rabbitmq-consumer --network=hnclone-network -e 'BACKEND_URL=$BACKEND_URL' -e 'rabbitmq=$RABBITMQ_URL'  -d hnclonecphb/rabbitmq-consumer:$CIRCLE_BRANCH"
 
 workflows:
   version: 2
