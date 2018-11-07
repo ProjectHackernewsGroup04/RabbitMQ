@@ -7,11 +7,6 @@ import time
 # ADDING CONTROLLED STARTUP CONDITION
 # READ https://docs.docker.com/compose/startup-order/
 
-url = os.environ.get('rabbitmq')
-params = pika.URLParameters(url)
-connection = pika.BlockingConnection(params)
-channel = connection.channel()
-
 backend_url = os.environ.get('BACKEND_URL')
 
 
@@ -25,11 +20,25 @@ def callback(ch, method, properties, body):
   except Exception as e:
   	print(e,flush=True)
 
-channel.basic_consume(callback,
-                      queue='helge-api-posts',
-                      no_ack=True)
-
 # Run rabbitmq consumer
 if __name__ == '__main__':
     print(' [*] RabbitMQ consumer: Waiting for messages:')
-    channel.start_consuming()
+    while(True):
+        try:
+            url = os.environ.get('rabbitmq')
+            params = pika.URLParameters(url)
+            connection = pika.BlockingConnection(params)
+            channel = connection.channel()
+            channel.basic_consume(callback,
+                                  queue='helge-api-posts',
+                                  no_ack=True)
+            try:
+                channel.start_consuming()
+            except KeyboardInterrupt:
+                channel.stop_consuming()
+                connection.close()
+                break
+        except pika.exceptions.ConnectionClosed:
+            continue
+        except pika.exceptions.AMQPConnectionError:
+            continue
