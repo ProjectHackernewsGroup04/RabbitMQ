@@ -1,0 +1,27 @@
+version: '3.5'
+services:
+  rabbitmq-consumer:
+    image: hnclonecphb/rabbitmq-consumer:master
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+      update_config:
+          delay: 30s
+    environment:
+      - rabbitmq=amqp://guest:guest@rabbitmq:5672/
+      - CLOUDAMQP_URL=amqp://guest:guest@rabbitmq:5672/rabbitmq_vhost
+      - BACKEND_URL=http://backend-app:5000
+    links:
+      - rabbitmq
+      - helge-api
+      - backend
+    depends_on:
+      - rabbitmq
+      - helge-api
+    networks:
+      - hackernews_ops
+
+networks:
+  hackernews_ops:
+    external: true
