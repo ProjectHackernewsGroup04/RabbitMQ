@@ -10,8 +10,6 @@ services:
           delay: 30s
     environment:
       - rabbitmq=amqp://guest:guest@rabbitmq:5672/
-      - CLOUDAMQP_URL=amqp://guest:guest@rabbitmq:5672/rabbitmq_vhost
-      - BACKEND_URL=http://backend-app:5000
     links:
       - rabbitmq
       - helge-api
