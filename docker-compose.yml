@@ -1,0 +1,19 @@
+version: '3.5'
+services:
+  rabbitmq-consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - rabbitmq=amqp://guest:guest@rabbitmq:5672/
+      - BACKEND_URL=http://backend:5000/webhook
+    command: python -u app/rabbitmq_consumer.py
+    networks:
+      - hackernews_ops
+    volumes:
+      - .:/app
+
+networks:
+  hackernews_ops:
+    external: true
+
