@@ -54,6 +54,8 @@ jobs:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: docker build -t hnclonecphb/rabbitmq-consumer:$CIRCLE_BRANCH .
       - run: docker push hnclonecphb/rabbitmq-consumer:$CIRCLE_BRANCH
+      - run: docker build -t hnclonecphb/rabbitmq-consumer:$CIRCLE_WORKFLOW_ID .
+      - run: docker push hnclonecphb/rabbitmq-consumer:$CIRCLE_WORKFLOW_ID
 
       - store_artifacts:
           path: test-reports
@@ -66,10 +68,7 @@ jobs:
       - run:
           name: Deploy over SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST "docker pull hnclonecphb/rabbitmq-consumer:$CIRCLE_BRANCH
-            docker stop rabbitmq-consumer
-            docker rm rabbitmq-consumer
-            docker run --name rabbitmq-consumer --network=hnclone-network -e 'BACKEND_URL=$BACKEND_URL' -e 'rabbitmq=$RABBITMQ_URL'  -d hnclonecphb/rabbitmq-consumer:$CIRCLE_BRANCH"
+            ssh $SSH_USER@$SSH_HOST "docker service update --network-add hnclone-network --env-add 'BACKEND_URL=$BACKEND_URL' --env-add 'rabbitmq=$RABBITMQ_URL'  -d --image hnclonecphb/rabbitmq-consumer:$CIRCLE_WORKFLOW_ID rabbitm-consumer"
 
 workflows:
   version: 2
