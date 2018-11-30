@@ -68,7 +68,7 @@ jobs:
       - run:
           name: Deploy over SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST "docker service update --network-add hnclone-network --env-add 'BACKEND_URL=$BACKEND_URL' --env-add 'rabbitmq=$RABBITMQ_URL'  -d --image hnclonecphb/rabbitmq-consumer:$CIRCLE_WORKFLOW_ID rabbitmq-consumer"
+            ssh $SSH_USER@$SSH_HOST "docker service update --env-add 'BACKEND_URL=$BACKEND_URL' --env-add 'rabbitmq=$RABBITMQ_URL' -d --image hnclonecphb/rabbitmq-consumer:$CIRCLE_WORKFLOW_ID rabbitmq-consumer"
 
 workflows:
   version: 2
